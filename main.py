@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# Call routers
+from app.auth.router import auth
+
+
 app = FastAPI()
 
 origins = [
@@ -14,3 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# include routers
+app.include_router(auth)
