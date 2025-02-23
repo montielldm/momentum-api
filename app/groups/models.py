@@ -8,10 +8,28 @@ from sqlalchemy import (
     Enum as SqlALchemyEnum,
     Text,
     ForeignKey,
+    Table,
+    Column
 )
 from providers.database import Base
 from datetime import datetime
 from app.programs.models import Program
+from typing import List
+
+association_table_apprentices = Table(
+    "apprentices_groups",
+    Base.metadata,
+    Column('apprentice_id', ForeignKey("users.id"), primary_key=True),
+    Column('group_id', ForeignKey("groups.id"), primary_key=True)
+)
+
+association_table_instructor = Table(
+    "instructors_groups",
+    Base.metadata,
+    Column("instructor_id", ForeignKey("users.id"), primary_key=True),
+    Column("group_id", ForeignKey("groups.id"), primary_key=True),
+)
+
 
 class StatusGroup(str, Enum):
     ACTIVE = "ACTIVE"
@@ -32,3 +50,7 @@ class Group(Base):
     # Add program relationship
     program_id: Mapped[str] = mapped_column(ForeignKey("programs.id"))
     program: Mapped["Program"] = relationship(back_populates="groups")
+
+    # Add apprentices relationship
+    apprentices: Mapped[List["User"]] = relationship(secondary=association_table_apprentices, back_populates="group_apprentices")
+    instructors: Mapped[List["User"]] = relationship(secondary=association_table_instructor, back_populates="group_instructors")

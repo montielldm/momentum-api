@@ -6,6 +6,12 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import String, Enum as SqlALchemyEnum, DateTime, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import Enum
+from typing import List
+from app.groups.models import (
+    association_table_apprentices,
+    Group,
+    association_table_instructor
+)
 
 class DocumentType(str, Enum):
     RC = "RC"
@@ -42,3 +48,6 @@ class User(Base):
     # Add roles relationship.
     role_id: Mapped[str] = mapped_column(ForeignKey("roles.id"))
     role: Mapped["Role"] = relationship(back_populates="users")
+
+    group_apprentices: Mapped["Group"] = relationship(secondary=association_table_apprentices, back_populates="apprentices")
+    group_instructors: Mapped["Group"] = relationship(secondary=association_table_instructor, back_populates="instructors")

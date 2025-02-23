@@ -96,8 +96,3 @@ def get_infor_user(id: str = Depends(get_current_user)):
         "avatar": user.avatar,
         "email": user.email
     }
-
-@auth.get("/groups")
-def get_infor_user(id: str = Depends(get_current_user)):
-    user = get_user_by_id(id)
-    return "cdc"
