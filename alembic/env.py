@@ -27,6 +27,8 @@ if config.config_file_name is not None:
 from providers.database import Base
 from app.users.models import User
 from app.authorization.models import Permission, association_table, Role
+from app.programs.models import Program
+from app.groups.models import Group
 
 target_metadata = Base.metadata
 

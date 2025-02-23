@@ -13,7 +13,8 @@ from app.auth.utils import (
     verify_refresh_token_service,
     create_forgot_password_token,
     send_email_service,
-    verfiy_forgot_password_token
+    verfiy_forgot_password_token,
+    get_current_user
 )
 from app.users.services import (
     get_user_by_id,
@@ -29,6 +30,7 @@ auth = APIRouter(
 @auth.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user_id = authenticate_user_service(form_data.username, form_data.password)
+    user = get_user_by_id(user_id)
 
     if user_id is None:
         UnauthorizedUser()
@@ -39,7 +41,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
-        "token_type": "bearer"
+        "user": {
+            "id": user.id,
+            "name": user.name,
+            "lastname": user.lastname,
+            "avatar": user.avatar,
+            "email": user.email
+        }
     }
 
 @auth.post("/refresh-token")
@@ -77,3 +85,19 @@ def reset_password(token:str, new_password: str):
         "success": True,
         "message": f"Hemos restablecido la contraseña para {user.email}"
     }
+
+@auth.get("/user")
+def get_infor_user(id: str = Depends(get_current_user)):
+    user = get_user_by_id(id)
+    return {
+        "id": user.id,
+        "name": user.name,
+        "lastname": user.lastname,
+        "avatar": user.avatar,
+        "email": user.email
+    }
+
+@auth.get("/groups")
+def get_infor_user(id: str = Depends(get_current_user)):
+    user = get_user_by_id(id)
+    return "cdc"
