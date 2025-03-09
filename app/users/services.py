@@ -6,11 +6,11 @@ from app.users.exceptions import (
 )
 from providers.database import ConnectDatabase
 from sqlalchemy.exc import PendingRollbackError
-
+from uuid import UUID
 
 session = ConnectDatabase.getInstance()
 
-def get_user_by_id(id: str):
+def get_user_by_id_service(id: str):
     try:
         result = session.get(User, id)
         if result is None:

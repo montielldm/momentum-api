@@ -17,7 +17,7 @@ from app.auth.utils import (
     get_current_user
 )
 from app.users.services import (
-    get_user_by_id,
+    get_user_by_id_service,
     get_user_by_email_service
 )
 
@@ -30,7 +30,7 @@ auth = APIRouter(
 @auth.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user_id = authenticate_user_service(form_data.username, form_data.password)
-    user = get_user_by_id(user_id)
+    user = get_user_by_id_service(user_id)
 
     if user_id is None:
         UnauthorizedUser()
@@ -53,7 +53,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @auth.post("/refresh-token")
 def refresh(refresh_token: str):
     user_id = verify_refresh_token_service(refresh_token)
-    user = get_user_by_id(user_id)
+    user = get_user_by_id_service(user_id)
 
     access_token = create_access_token({"sub": str(user.id)})
 
@@ -88,7 +88,7 @@ def reset_password(token:str, new_password: str):
 
 @auth.get("/user")
 def get_infor_user(id: str = Depends(get_current_user)):
-    user = get_user_by_id(id)
+    user = get_user_by_id_service(id)
     return {
         "id": user.id,
         "name": user.name,
