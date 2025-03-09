@@ -12,6 +12,7 @@ from app.groups.models import (
     Group,
     association_table_instructor
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class DocumentType(str, Enum):
     RC = "RC"
@@ -49,5 +50,14 @@ class User(Base):
     role_id: Mapped[str] = mapped_column(ForeignKey("roles.id"))
     role: Mapped["Role"] = relationship(back_populates="users")
 
-    group_apprentices: Mapped["Group"] = relationship(secondary=association_table_apprentices, back_populates="apprentices")
-    group_instructors: Mapped["Group"] = relationship(secondary=association_table_instructor, back_populates="instructors")
+    group_apprentices: Mapped[List["Group"]] = relationship(secondary=association_table_apprentices, back_populates="apprentices")
+    group_instructors: Mapped[List["Group"]] = relationship(secondary=association_table_instructor, back_populates="instructors")
+
+    @hybrid_property
+    def groups(self):
+        if self.role.name == "apprentice":
+            return self.group_apprentices
+        elif self.role.name == "instructor":
+            return self.group_instructors
+        else:
+            return []
